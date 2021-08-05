@@ -53,6 +53,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'meiduo_mall.urls'
 
 TEMPLATES = [
+    # jinja2环境配置
     {
         # 'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
