@@ -38,6 +38,23 @@ let vm = new Vue({
                 this.error_name_message = '请输入5-20个字符的用户名';
                 this.error_name = true;
             }
+
+            // 判断用户名是否注册成功
+            if (this.error_name == false){
+                let url = '/usernames/' + this.username + '/count/';
+                 axios.get(url,{
+                     responseType:'json'
+                 }).then(response=>{
+                     if (response.data.count == 1){
+                         this.error_name_message = '用户已存在';
+                         this.error_name = true
+                     }
+                 }).catch(error=>{
+                     console.log(error.response)
+                 })
+            }
+
+
         },
         // 校验密码
         check_password() {
@@ -64,6 +81,21 @@ let vm = new Vue({
             } else {
                 this.error_mobile_message = '您输入的手机号格式不正确';
                 this.error_mobile = true;
+            }
+
+            // 判断手机号是否重复
+            if (this.error_mobile == false){
+                let url = '/mobiles/' + this.mobile + '/count/';
+                axios.get(url,{
+                    responseType: 'json'
+                }).then(response=>{
+                    if (response.data.count ==1 ){
+                        this.error_mobile_message = '手机号已存在';
+                        this.error_mobile = true
+                    }
+                }).catch(error=>{
+                    console.log(error.response)
+                })
             }
         },
         // 校验是否勾选协议
