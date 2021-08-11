@@ -20,8 +20,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # users
     url(r'^', include(('users.urls', 'users'), namespace='users')),
-    # 广告
+    # contents
     url(r'^', include(('contents.urls', 'contents'), namespace='contents')),
-    # 图形验证码
+    # verifications
     url(r'^', include(('verifications.urls', 'verifications'), namespace='verifications')),
+
 ]

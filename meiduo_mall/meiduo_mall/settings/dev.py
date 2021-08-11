@@ -18,7 +18,7 @@ import pymysql
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-print(BASE_DIR)
+# print(BASE_DIR)
 
 # 查看项目导包路径
 # print(sys.path)
@@ -32,6 +32,8 @@ print(BASE_DIR)
 """
 # 追加导包路径
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+
+# print(sys.path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -48,14 +50,15 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
-    'django.contrib.auth', # 用户认证系统
+    'django.contrib.auth',  # 用户认证系统
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'meiduo_mall.apps.users',  # 用户模块
-    'users',  # 用户模块
 
+    'meiduo_mall.apps.users',  # 用户模块
+    'meiduo_mall.apps.contents',  # 首页广告模块
+    'meiduo_mall.apps.verifications',  # 验证码模块
 ]
 
 MIDDLEWARE = [
@@ -84,6 +87,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            # 补充jinja2模板引擎环境
             'environment': 'meiduo_mall.utils.jinja2_env.environment',
         },
     },
@@ -158,15 +162,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+# 制定静态加载文件的路由前缀
 STATIC_URL = '/static/'
 
 # 配置静态文件加载路径
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
+# 配置Redis数据库
 CACHES = {
-    "default": {
+    "default": {  # 默认
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://127.0.0.1:6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -174,6 +180,13 @@ CACHES = {
     "session": {  # session
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verify_code": {  # 验证码
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
