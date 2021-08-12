@@ -14,6 +14,8 @@ let vm = new Vue({
         image_code_url: '',
         uuid: '',
         image_code: '',
+        sms_code_tip: '',
+        send_flag: false, // 类别上厕所，send_flag就是锁，false表示门开，true表示门关
 
         // v-show
         error_name: false,
@@ -26,7 +28,8 @@ let vm = new Vue({
         // error_message
         error_name_message: '',
         error_mobile_message: '',
-        error_image_code_message: ''
+        error_image_code_message: '',
+        error_sms_code_message: '',
 
     },
     mounted() {//    页面加载完被调用的
@@ -35,6 +38,56 @@ let vm = new Vue({
     },
 
     methods: {// 定义和实现事件方法
+
+        // 发送短信验证码
+        send_sms_code() {
+            // 避免恶意用户频繁的点击获取短信验证码的标签
+            if (this.send_flag == true) { // 先判断是否有人正在上厕所
+                return; //有人正在上厕所，退回去
+            }
+            this.send_flag = true; // 如果可以进入厕所，立即关门
+
+            // 检验数据：mobile，image_code
+            this.check_mobile();
+            this.check_image_code();
+            if (this.error_mobile == true || this.error_image_code == true) {
+                this.send_flag = false;
+                return;
+            }
+
+            // ajax请求
+            let url = '/sms_code/' + this.mobile + '/?image_code=' + this.image_code + '$uuid=' + this.uuid;
+            axios.get(url, {
+                responseType: 'json'
+            }).then(response => {
+                if (response.data.code == '0') {
+                    // 展示倒计时60秒
+                    let num = 60;
+                    let t = setInterval(() => {
+                        if (num == 1) {
+                            clearInterval(t);
+                            this.sms_code_tip = '获取短信验证码';
+                            this.send_flag = false;
+                        } else {
+                            num -= 1;
+                            // 展示倒计时信息
+                            this.sms_code_tip = num + '秒';
+                        }
+                    }, 1000, 60)
+                } else {
+                    if (response.data.code == '4001') {
+                        this.error_image_code_message = response.data.errmsg;
+                        this.error_image_code = true
+                    }
+                    this.send_flag = false;
+                }
+            }).catch(error => {
+                console.log(error.response);
+                this.send_flag = false;
+            })
+
+
+        },
 
         // 生成图形验证码的方法：封装的思想，代码复用
         generate_image_code() {
