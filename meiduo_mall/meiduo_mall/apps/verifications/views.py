@@ -2,17 +2,18 @@ import random
 import logging
 from django import http
 from django.shortcuts import render
-
-# Create your views here.
 from django.views import View
 from django_redis import get_redis_connection
+
 from . import constants
-
 from verifications.libs.captcha.captcha import captcha
-
 from .constants import *
 from .libs.hywx.sms2 import send_sms
-from ...utils.response_code import RETCODE
+from meiduo_mall.utils.response_code import RETCODE
+from celery_tasks.sms.tasks import send_sms_code
+
+# 创建日志输出器
+logger = logging.getLogger('django')
 
 
 class ImageCodeView(View):
@@ -77,25 +78,29 @@ class SMSCodeView(View):
 
         # 生成短信验证码
         sms_code = '%06d' % random.randint(0, 999999)
-        logging.info(sms_code)  # 手动输入日志，记录短信验证码
+        print(sms_code)
+        logger.info(sms_code)  # 手动输入日志，记录短信验证码
 
         # # 保存短信验证码
         # redis_conn.setex('sms_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
         # # 重新写入send_flag
         # redis_conn.setex('send_flag_%s' % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
 
-        # 创建管道
-        p1 = redis_conn.pipline()
+        # 创建redis管道
+        pl = redis_conn.pipeline()
         # 将命令添加到队列中
         # 保存短信验证码
-        p1.setex('sms_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
-        # 保存发送短信验证码标记
-        p1.setex('send_flag_%s' % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
+        pl.setex('sms_%s' % mobile, constants.SMS_CODE_REDIS_EXPIRES, sms_code)
+        # 保存发送短信验证码的标记
+        pl.setex('send_flag_%s' % mobile, constants.SEND_SMS_CODE_INTERVAL, 1)
         # 执行
-        p1.execute()
+        pl.execute()
 
         # 发送短信验证码
-        send_sms(mobile, [sms_code, constants.SMS_CODE_REDIS_EXPIRES // 60], constants.SEND_SMS_TEMPLATE_ID)
+        # send_sms(mobile, '您的验证码是：%s。请不要把验证码泄露给其他人。' % sms_code)
+        # 使用celery发送验证码
+        # send_sms_code(mobile, '您的验证码是：%s。请不要把验证码泄露给其他人。' % sms_code)     # 错误写法
+        send_sms_code.delay(mobile, '您的验证码是：%s。请不要把验证码泄露给其他人。' % sms_code)
 
         # 响应结果
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '发短信成功'})

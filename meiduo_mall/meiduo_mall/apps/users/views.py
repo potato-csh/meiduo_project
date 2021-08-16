@@ -10,6 +10,39 @@ from users.models import User
 from meiduo_mall.utils.response_code import RETCODE
 
 
+class LoginView(View):
+    """用户登录"""
+
+    def get(self):
+        """
+        提供登录界面
+        :param request: 请求对象
+        :return: 登录界面
+        """
+        pass
+
+    def POST(self, request):
+        """
+        实现登录逻辑
+        :param request: 请求对象
+        :return: 登录结果
+        """
+
+        # 1、接受参数
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        remembered = request.POST.get('remembered')
+
+        # 2、校验参数
+
+
+        # 3、认证登录用户
+
+        # 4、状态
+
+
+
+
 class RegisterView(View):
     """用户注册"""
 
@@ -56,7 +89,7 @@ class RegisterView(View):
         sms_code_server = redis_conn.get('sms_%s' % mobile)
         if sms_code_server is None:
             return render(request, 'register.html', {'sms_code_errmsg': '短信验证码已失效'})
-        if sms_code_client != sms_code_client.decode():
+        if sms_code_client != sms_code_server.decode():
             return render(request, 'register.html', {'errmsg': '输入短信验证码有误'})
 
         # 判断是否勾选用户协议

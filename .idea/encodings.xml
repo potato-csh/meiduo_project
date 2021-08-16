@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/meiduo_mall/celery_tasks/sms/hywx/sms2.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/meiduo_mall/celery_tasks/sms/hywx/sms3.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/meiduo_mall/celery_tasks/sms/sms2.py" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/meiduo_mall/celery_tasks/sms/sms3.py" charset="GBK" />
     <file url="file://$PROJECT_DIR$/meiduo_mall/meiduo_mall/apps/verifications/libs/hywx/sms2.py" charset="GBK" />
     <file url="file://$PROJECT_DIR$/meiduo_mall/meiduo_mall/apps/verifications/libs/hywx/sms3.py" charset="GBK" />
   </component>
