@@ -1,6 +1,6 @@
 import re
 from django import http
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.db import DatabaseError
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -35,12 +35,35 @@ class LoginView(View):
 
         # 2、校验参数
 
+        # 判断参数是否齐全
+        if not all([username, password, remembered]):
+            return http.HttpResponseForbidden('缺少必传参数')
+
+        # 判断用户名是否是5-20个字符
+        if not re.match(r'^[a-zA-Z0-9_-]{5,20}$', username):
+            return http.HttpResponseForbidden('请输入正确的用户名或者手机号')
+
+        # 判断密码是否是8-20个字符
+        if not re.match(r'^[0-9A-Za-z]{8,20}$', password):
+            return http.HttpResponseForbidden('密码最少8位，最长20位')
 
         # 3、认证登录用户
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return render(request, 'login.html', {'account_msg': '用户名或者密码错误'})
 
-        # 4、状态
+        # 4、状态保持
+        login(request, user)
+        # 设置状态保持的周期
+        if remembered != 'on':
+            # 没有记住用户，浏览器会话结束就过期
+            request.session.set_expiry(0)
+        else:
+            # 记住用户：none代表两周后过期
+            request.session.set_expiry(None)
 
-
+        # 5、响应结果
+        return redirect(reverse('contents:index'))
 
 
 class RegisterView(View):
