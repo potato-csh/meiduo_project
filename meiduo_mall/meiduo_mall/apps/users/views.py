@@ -13,15 +13,15 @@ from meiduo_mall.utils.response_code import RETCODE
 class LoginView(View):
     """用户登录"""
 
-    def get(self):
+    def get(self, request):
         """
         提供登录界面
         :param request: 请求对象
         :return: 登录界面
         """
-        pass
+        return render(request, 'login.html')
 
-    def POST(self, request):
+    def post(self, request):
         """
         实现登录逻辑
         :param request: 请求对象
@@ -36,7 +36,7 @@ class LoginView(View):
         # 2、校验参数
 
         # 判断参数是否齐全
-        if not all([username, password, remembered]):
+        if not all([username, password]):
             return http.HttpResponseForbidden('缺少必传参数')
 
         # 判断用户名是否是5-20个字符
@@ -50,20 +50,25 @@ class LoginView(View):
         # 3、认证登录用户
         user = authenticate(username=username, password=password)
         if user is None:
-            return render(request, 'login.html', {'account_msg': '用户名或者密码错误'})
+            return render(request, 'login.html', {'account_errmsg': '账号或者密码错误'})
 
         # 4、状态保持
         login(request, user)
         # 设置状态保持的周期
         if remembered != 'on':
-            # 没有记住用户，浏览器会话结束就过期
+            # 没有记住登录：状态保持在浏览器会话结束后就销毁
             request.session.set_expiry(0)
         else:
             # 记住用户：none代表两周后过期
             request.session.set_expiry(None)
 
         # 5、响应结果
-        return redirect(reverse('contents:index'))
+        response = redirect(reverse('contents:index'))
+
+        # 注册时用户名写入到cookie，有效期15天
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
+        return response
 
 
 class RegisterView(View):
@@ -130,7 +135,12 @@ class RegisterView(View):
 
         # 5、响应注册结果
         # return http.HttpResponse('注册成功，重定向到首页')
-        return redirect(reverse('contents:index'))
+        response = redirect(reverse('contents:index'))
+
+        # 注册时用户名写入到cookie，有效期15天
+        response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
+        return response
 
 
 class UsernameCountView(View):

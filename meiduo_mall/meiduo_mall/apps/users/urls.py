@@ -9,4 +9,6 @@ urlpatterns = [
     # 判断手机号是否重复
     url(r'^mobiles/(?P<mobile>1[3-9]\d{9})/count/$', MobileCountView.as_view()),
 
+    # 登录
+    url(r'^login/$', LoginView.as_view(), name='login'),
 ]
