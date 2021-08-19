@@ -1,11 +1,13 @@
 import re
 from django import http
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.db import DatabaseError
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
 from django_redis import get_redis_connection
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from users.models import User
 from meiduo_mall.utils.response_code import RETCODE
 
@@ -67,6 +69,39 @@ class LoginView(View):
 
         # 注册时用户名写入到cookie，有效期15天
         response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
+        return response
+
+
+# LoginRequiredMixin中自带is_authenticated，要求LoginRequiredMixin必须作为第一个参数
+class UserInfoView(LoginRequiredMixin, View):
+    """用户中心"""
+
+    def get(self, request):
+        """提供个人信息界面"""
+        # if request.user.is_authenticated:
+        #     return render(request, 'user_center_info.html')
+        # else:
+        #     return redirect(reverse('users:login'))
+
+        return render(request, 'user_center_info.html')
+
+
+class LogoutView(View):
+    """退出登录"""
+
+    def get(self, request):
+        """
+        实现退出登录逻辑
+        :param request:
+        :return:
+        """
+        # 清理session
+        logout(request)
+        # 退出登录，重定向到首页
+        response = redirect(reverse('contents:index'))
+        # 退出登录清除cookie中的username
+        response.delete_cookie('username')
 
         return response
 

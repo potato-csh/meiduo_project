@@ -29,7 +29,7 @@
 							<label>用户名:</label>
 							<input type="text" v-model="username" @blur="check_username" name="username" id="user_name">
 							<span class="error_tip" v-show="error_name">[[ error_name_message ]]</span>
-						</li>
+						</li>					
 						<li>
 							<label>密码:</label>
 							<input type="password" v-model="password" @blur="check_password" name="password" id="pwd">
@@ -57,9 +57,9 @@
                             <a @click="send_sms_code" class="get_msg_code">[[ sms_code_tip ]]</a>
                             <span class="error_tip" v-show="error_sms_code">[[ error_sms_code_message ]]</span>
 
-                            {% if sms_code_errmsg %}
+                            {{% if sms_code_errmsg %}
                                 <span class="error_tip">{{ sms_code_errmsg }}</span>
-                            {% endif %}
+                            {% endif %}}
 
                         </li>
 						<li class="agreement">
@@ -74,7 +74,7 @@
 						<li class="reg_sub">
 							<input type="submit" value="注 册">
 						</li>
-					</ul>
+					</ul>				
 				</form>
 			</div>
 		</div>
@@ -87,7 +87,7 @@
 			<span>|</span>
 			<a href="#">招聘人才</a>
 			<span>|</span>
-			<a href="#">友情链接</a>
+			<a href="#">友情链接</a>		
 		</div>
 		<p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
 		<p>电话：010-****888    京ICP备*******8号</p>

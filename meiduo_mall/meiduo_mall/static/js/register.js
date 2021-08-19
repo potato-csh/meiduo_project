@@ -159,7 +159,7 @@ let vm = new Vue({
 
             // 判断手机号是否重复注册
             if (this.error_mobile == false) {
-                let url = '/mobiles/' + this.mobile + '/count/';
+                let url = '/mobiles/'+ this.mobile + '/count/';
                 axios.get(url, {
                     responseType: 'json'
                 })
@@ -186,8 +186,8 @@ let vm = new Vue({
             }
         },
         // 校验短信验证码
-        check_sms_code() {
-            if (this.sms_code.length != 6) {
+        check_sms_code(){
+            if(this.sms_code.length != 6){
                 this.error_sms_code_message = '请填写短信验证码';
                 this.error_sms_code = true;
             } else {
