@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'meiduo_mall.apps.users',  # 用户模块
     'meiduo_mall.apps.contents',  # 首页广告模块
     'meiduo_mall.apps.verifications',  # 验证码模块
+    'meiduo_mall.apps.oauth',  # 第三方QQ模块
 ]
 
 MIDDLEWARE = [
@@ -244,3 +245,8 @@ AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBackend']
 
 # 判断用户是否登录时，指定未登录用户跳转的地址
 LOGIN_URL = '/login/'
+
+# QQ登录参数
+QQ_CLIENT_ID = '101518219'
+QQ_CLIENT_SECRET = '418d84ebdc7241efb79536886ae95224'
+QQ_REDIRECT_URI = 'http://www.meiduo.site:8000/oauth_callback'

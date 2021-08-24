@@ -18,11 +18,14 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
     # users
     url(r'^', include(('users.urls', 'users'), namespace='users')),
     # contents
     url(r'^', include(('contents.urls', 'contents'), namespace='contents')),
     # verifications
-    url(r'^', include(('verifications.urls', 'verifications'), namespace='verifications')),
+    url(r'^', include(('verifications.urls', 'verifications'))),
+    # oauth
+    url(r'^', include(('oauth.urls', 'oauth'))),
 
 ]
