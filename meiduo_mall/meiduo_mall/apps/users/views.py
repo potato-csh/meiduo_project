@@ -1,4 +1,4 @@
-import re
+import re, json, logging
 from django import http
 from django.contrib.auth import login, authenticate, logout
 from django.db import DatabaseError
@@ -10,6 +10,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from users.models import User
 from meiduo_mall.utils.response_code import RETCODE
+from celery_tasks.email.tasks import send_verify_email
+
+# 创建日志生成器
+logger = logging.getLogger('django')
 
 
 class LoginView(View):
@@ -92,7 +96,46 @@ class UserInfoView(LoginRequiredMixin, View):
         # else:
         #     return redirect(reverse('users:login'))
 
-        return render(request, 'user_center_info.html')
+        # 如果LoginRequiredMixin判断出用户已登录，那么request.user就是登录用户对象
+        context = {
+            'username': request.user.username,
+            'mobile': request.user.mobile,
+            'email': request.user.email,
+            'eamil_active': request.user.email_active,
+        }
+
+        return render(request, 'user_center_info.html', context)
+
+
+class EmailView(View):
+    """添加邮箱"""
+
+    def put(self, request):
+        """实现添加邮箱业务逻辑"""
+        # 获取参数
+        json_str = request.body.decode()  # body是byte类型
+        json_dic = json.loads(json_str)
+        email = json_dic.get('email')
+
+        # 校验参数
+        if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+            return http.HttpResponseForbidden('参数email有误')
+
+        # 将输入的email传入到用户数据库中
+        try:
+            request.user.email = email
+            request.user.save()
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '添加邮箱失败'})
+
+        # 发送邮件验证邮箱
+        verify_url = 'wwww.itcast.com'
+        # send_verify_email(email, verify_url) # 错误的写法
+        send_verify_email.delay(email, verify_url)  # 一定要记得调用delay
+
+        # 响应结果
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
 
 class LogoutView(View):

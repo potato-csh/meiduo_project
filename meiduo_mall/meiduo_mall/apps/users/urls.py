@@ -14,5 +14,7 @@ urlpatterns = [
     # 退出登录
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
     # 用户中心
-    url(r'^info/$', UserInfoView.as_view(), name='info')
+    url(r'^info/$', UserInfoView.as_view(), name='info'),
+    # 添加邮箱
+    url(r'^emails/$', EmailView.as_view(), name='email'),
 ]
