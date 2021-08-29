@@ -44,14 +44,13 @@ class LoginView(View):
         # 2、校验参数
 
         # 判断参数是否齐全
+        # 校验参数
         if not all([username, password]):
             return http.HttpResponseForbidden('缺少必传参数')
 
-        # 判断用户名是否是5-20个字符
         if not re.match(r'^[a-zA-Z0-9_-]{5,20}$', username):
-            return http.HttpResponseForbidden('请输入正确的用户名或者手机号')
+            return http.HttpResponseForbidden('请输入正确的用户名或手机号')
 
-        # 判断密码是否是8-20个字符
         if not re.match(r'^[0-9A-Za-z]{8,20}$', password):
             return http.HttpResponseForbidden('密码最少8位，最长20位')
 
@@ -103,7 +102,7 @@ class UserInfoView(LoginRequiredMixin, View):
             'username': request.user.username,
             'mobile': request.user.mobile,
             'email': request.user.email,
-            'eamil_active': request.user.email_active,
+            'email_active': request.user.email_active,
         }
 
         return render(request, 'user_center_info.html', context)
