@@ -56,10 +56,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'meiduo_mall.apps.users',  # 用户模块
-    'meiduo_mall.apps.contents',  # 首页广告模块
-    'meiduo_mall.apps.verifications',  # 验证码模块
-    'meiduo_mall.apps.oauth',  # 第三方QQ模块
+    'meiduo_mall.apps.users',   # 用户模块
+    'meiduo_mall.apps.contents',    # 首页广告模块
+    'meiduo_mall.apps.verifications',   # 验证码模块
+    'meiduo_mall.apps.oauth',   # 第三方QQ模块
+    'meiduo_mall.apps.areas',   # 收货地址
+
 ]
 
 MIDDLEWARE = [

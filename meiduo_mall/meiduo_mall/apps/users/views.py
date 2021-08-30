@@ -108,7 +108,16 @@ class UserInfoView(LoginRequiredMixin, View):
         return render(request, 'user_center_info.html', context)
 
 
-class EmailView(View):
+class AddressView(View):
+    """用户收货地址"""
+
+    def get(self, request):
+        """提供收货地址界面"""
+        return render(request, 'user_center_site.html')
+
+
+
+class EmailView(LoginRequiredMixin, View):
     """添加邮箱"""
 
     def put(self, request):

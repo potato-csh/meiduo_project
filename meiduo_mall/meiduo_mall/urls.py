@@ -27,5 +27,7 @@ urlpatterns = [
     url(r'^', include(('verifications.urls', 'verifications'))),
     # oauth
     url(r'^', include(('oauth.urls', 'oauth'))),
+    # areas
+    url(r'^', include(('areas.urls', 'areas'))),
 
 ]
