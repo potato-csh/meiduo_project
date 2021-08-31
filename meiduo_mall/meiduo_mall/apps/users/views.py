@@ -160,12 +160,22 @@ class AddressCreateView(View):
             email=email
         )
 
+        # 将新增地址交给前端实现局部刷新
         address_dict = {
-            id
+            'id': address.id,
+            "title": address.title,
+            "receiver": address.receiver,
+            "province": address.province.name,
+            "city": address.city.name,
+            "district": address.district.name,
+            "place": address.place,
+            "mobile": address.mobile,
+            "tel": address.tel,
+            "email": address.email
         }
 
         # 响应保存结果
-        return http.JsonResponse({'code':RETCODE.OK,'errmsg':'OK','address':address_dict})
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'address': address_dict})
 
 
 class EmailView(LoginRequiredMixin, View):
