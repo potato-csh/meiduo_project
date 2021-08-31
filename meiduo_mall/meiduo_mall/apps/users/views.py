@@ -9,7 +9,7 @@ from django_redis import get_redis_connection
 from django.contrib.auth.mixins import LoginRequiredMixin
 from itsdangerous import BadData
 
-from users.models import User
+from users.models import User, Address
 from meiduo_mall.utils.response_code import RETCODE
 from celery_tasks.email.tasks import send_verify_email
 from .utils import generate_verify_email_url, check_verify_email_token
@@ -115,6 +115,57 @@ class AddressView(View):
         """提供收货地址界面"""
         return render(request, 'user_center_site.html')
 
+
+class AddressCreateView(View):
+    """新增地址"""
+
+    def post(self, request):
+        """新增地址的逻辑"""
+        pass
+        # 获取参数
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        receiver = json_dict.get('receiver')
+        province_id = json_dict.get('province_id')
+        city_id = json_dict.get('city_id')
+        district_id = json_dict.get('district_id')
+        place = json_dict.get('place')
+        mobile = json_dict.get('mobile')
+        tel = json_dict.get('tel')
+        email = json_dict.get('email')
+
+        # 校验参数
+        if not all([receiver, province_id, city_id, district_id, place, mobile]):
+            return http.HttpResponseForbidden('缺少必传参数')
+        if not re.match(r'^1[3-9]\d{9}$', mobile):
+            return http.HttpResponseForbidden('参数mobile有误')
+        if tel:
+            if not re.match(r'^(0[0-9]{2,3}-)?([2-9][0-9]{6,7})+(-[0-9]{1,4})?$', tel):
+                return http.HttpResponseForbidden('参数tel有误')
+        if email:
+            if not re.match(r'^[a-z0-9][\w\.\-]*@[a-z0-9\-]+(\.[a-z]{2,5}){1,2}$', email):
+                return http.HttpResponseForbidden('参数email有误')
+
+        # 将数据保存到mysql数据库
+        address = Address.objects.create(
+            user=request.user,
+            title=receiver,
+            receiver=receiver,
+            province_id=province_id,
+            city_id=city_id,
+            district_id=district_id,
+            place=place,
+            mobile=mobile,
+            tel=tel,
+            email=email
+        )
+
+        address_dict = {
+            id
+        }
+
+        # 响应保存结果
+        return http.JsonResponse({'code':RETCODE.OK,'errmsg':'OK','address':address_dict})
 
 
 class EmailView(LoginRequiredMixin, View):
