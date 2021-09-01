@@ -22,5 +22,10 @@ urlpatterns = [
     # 展现收货地址
     url(r'^addresses$', AddressView.as_view(), name='address'),
     # 新增收货地址
-    url(r'^addresses/create/$',AddressCreateView.as_view()),
+    url(r'^addresses/create/$', AddressCreateView.as_view()),
+    # 更新和删除收货地址
+    url(r'^addresses/(?P<address_id>\d+)/$', UpdateDestroyAddressView.as_view()),
+    # 设置为默认收货地址
+    url(r'^addresses/(?P<address_id>\d+)/default/$', DefaultAddressView.as_view()),
+
 ]
