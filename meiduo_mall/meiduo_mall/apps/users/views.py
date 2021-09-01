@@ -325,7 +325,7 @@ class DefaultAddressView(LoginRequiredMixin, View):
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '设置默认地址失败'})
 
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '已设置为默认地址'})
-
+ 
 
 class EmailView(LoginRequiredMixin, View):
     """添加邮箱"""
