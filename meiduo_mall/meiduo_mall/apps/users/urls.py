@@ -30,5 +30,5 @@ urlpatterns = [
     # 修改收货地址的标题
     url(r'^addresses/(?P<address_id>\d+)/title/$', UpdateTitleAddress.as_view()),
     # 修改密码
-    url(r'^password/$', ChangePasswordView.as_view())
+    url(r'^password/$', ChangePasswordView.as_view(), name='password')
 ]
