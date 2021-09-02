@@ -325,7 +325,78 @@ class DefaultAddressView(LoginRequiredMixin, View):
             return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '设置默认地址失败'})
 
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '已设置为默认地址'})
- 
+
+
+class UpdateTitleAddress(LoginRequiredMixin, View):
+    """修改收货地址标题"""
+
+    def put(self, request, address_id):
+        """修改收货地址的逻辑"""
+        # 获取参数
+        json_str = request.body.decode()
+        json_dict = json.loads(json_str)
+        title = json_dict['title']
+
+        try:
+            # 查询地址
+            address = Address.objects.get(id=address_id)
+
+            # 修改收货地址
+            address.title = title
+            address.save()
+        except Exception as e:
+            logger.error(e)
+            return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '修改收货地址失败'})
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '修改收货地址成功'})
+
+
+class ChangePasswordView(LoginRequiredMixin, View):
+    """修改密码"""
+
+    def get(self, request):
+        """展示修改密码的页面"""
+        return render(request, 'user_center_pass.html')
+
+    def post(self, request):
+        """修改密码的逻辑"""
+
+        # 获取参数
+        # 接收请求体表单数据
+        query_dict = request.POST
+        old_pwd = query_dict.get('old_pwd')
+        new_pwd = query_dict.get('new_pwd')
+        new_cpwd = query_dict.get('new_cpwd')
+
+        # 校验参数
+        if not all([old_pwd, new_pwd, new_cpwd]):
+            return http.HttpResponseForbidden('缺少必传参数')
+        try:
+            request.user.check_password(old_pwd)
+        except Exception as e:
+            logger.error(e)
+            return render(request, 'user_center_pass.html', {'origin_pwd_errmsg': '原始密码错误'})
+        if not re.match(r'^[0-9A-Za-z]{8,20}$', old_pwd):
+            return http.HttpResponseForbidden('密码最少8位，最长20位')
+        if new_pwd != new_cpwd:
+            return http.HttpResponseForbidden('两次输入的密码不一致')
+
+        # 修改密码
+        try:
+            request.user.set_password(new_pwd)
+            request.user.save()
+        except Exception as e:
+            logger.error(e)
+            return render(request, 'user_center_pass.html', {'change_pwd_errmsg': '修改密码错误'})
+
+        # 清理状态保持信息
+        logout(request)
+        response = redirect(reverse('users:login'))
+        response.delete_cookie('username')
+
+        # 响应密码修改结果：重定向到登录界面
+        return response
+
 
 class EmailView(LoginRequiredMixin, View):
     """添加邮箱"""

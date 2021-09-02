@@ -27,5 +27,8 @@ urlpatterns = [
     url(r'^addresses/(?P<address_id>\d+)/$', UpdateDestroyAddressView.as_view()),
     # 设置为默认收货地址
     url(r'^addresses/(?P<address_id>\d+)/default/$', DefaultAddressView.as_view()),
-
+    # 修改收货地址的标题
+    url(r'^addresses/(?P<address_id>\d+)/title/$', UpdateTitleAddress.as_view()),
+    # 修改密码
+    url(r'^password/$', ChangePasswordView.as_view())
 ]
