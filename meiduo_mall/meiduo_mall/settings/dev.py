@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'meiduo_mall.apps.verifications',   # 验证码模块
     'meiduo_mall.apps.oauth',   # 第三方QQ模块
     'meiduo_mall.apps.areas',   # 收货地址
+    'meiduo_mall.apps.goods',   # 商品
 
 ]
 
