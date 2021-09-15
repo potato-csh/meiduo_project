@@ -56,12 +56,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'users',   # 用户模块
-    'contents',    # 首页广告模块
-    'verifications',   # 验证码模块
-    'oauth',   # 第三方QQ模块
-    'areas',   # 收货地址
-    'goods',   # 商品
+    'users',  # 用户模块
+    'contents',  # 首页广告模块
+    'verifications',  # 验证码模块
+    'oauth',  # 第三方QQ模块
+    'areas',  # 收货地址
+    'goods',  # 商品
 ]
 
 MIDDLEWARE = [
@@ -263,3 +263,6 @@ EMAIL_FROM = '美多商城<projectTest001@163.com>'  # 发件人抬头
 
 # 邮箱验证链接
 EMAIL_VERIFY_URL = 'http://www.meiduo.site:8000/emails/verification/'
+
+# 指定自定义的Django文件存储类
+DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.fdfs_storage.FastDFSStorage'
