@@ -109,8 +109,8 @@
     </div>
     <div class="pos_center_con clearfix">
         <ul class="slide">
-            {% for content in contents.indx_lbt %}
-                <li><a href="{{ content.url }}"><img src="{{ content.img }}" alt="幻灯片01"></a></li>
+            {% for content in contents.index_lbt %}
+                <li><a href="{{ content.url }}"><img src="{{ content.image.url }}" alt="幻灯片01"></a></li>
             {% endfor %}
         </ul>
         <div class="prev"></div>
@@ -143,7 +143,7 @@
             </div>
             <div class="goods_con clearfix">
                 <div class="goods_banner fl">
-                    <img src="{{ contents.index_1f_logo.0.image }}">
+                    <img src="{{ contents.index_1f_logo.0.image.url }}">
                     <div class="channel">
                         {% for content in contents.index_1f_pd %}
                             <a href="{{ content.url }}">{{ content.title }}</a>
@@ -197,7 +197,7 @@
             </div>
             <div class="goods_con clearfix">
                 <div class="goods_banner fl">
-                    <img src="{{ contents.index_2f_logo.0.image }}">
+                    <img src="{{ contents.index_2f_logo.0.image.url }}">
                     <div class="channel">
                         {% for content in contents.index_2f_pd %}
                             <a href="{{ content.url }}">{{ content.title }}</a>
@@ -241,7 +241,7 @@
             </div>
             <div class="goods_con clearfix">
                 <div class="goods_banner fl">
-                    <img src="{{ contents.index_3f_logo.0.image }}">
+                    <img src="{{ contents.index_3f_logo.0.image.url }}">
                     <div class="channel">
                         {% for content in contents.index_3f_pd %}
                             <a href="{{ content.url }}">{{ content.title }}</a>

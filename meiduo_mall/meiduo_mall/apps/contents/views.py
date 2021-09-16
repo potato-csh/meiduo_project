@@ -34,3 +34,6 @@ class IndexView(View):
 
     def post(self, requset):
         pass
+
+
+

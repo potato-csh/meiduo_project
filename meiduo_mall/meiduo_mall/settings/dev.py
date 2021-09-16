@@ -44,7 +44,7 @@ SECRET_KEY = 'ltw5(q&en=3sx6yc8$#(o04xx1na=@mi35p7rhpdu57z=e+zgg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.meiduo.site']
+ALLOWED_HOSTS = ['www.meiduo.site','image.meiduo.site']
 
 # Application definition
 
@@ -266,3 +266,7 @@ EMAIL_VERIFY_URL = 'http://www.meiduo.site:8000/emails/verification/'
 
 # 指定自定义的Django文件存储类
 DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.fdfs_storage.FastDFSStorage'
+
+# FastDFS相关参数
+# FDFS_BASE_URL = 'http://1172.31.163.95:8888/'
+FDFS_BASE_URL = 'http://image.meiduo.site:8888/'

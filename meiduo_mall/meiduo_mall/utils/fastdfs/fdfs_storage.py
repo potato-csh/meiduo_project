@@ -37,4 +37,7 @@ class FastDFSStorage(Storage):
         :return:
         文件的全路径（http://172.31.163.95:8888/group1/M00/00/00/CtM3BVnifxeAPTodAAPWWMjR7sE487.jpg）
         """
-        return 'http://172.31.163.95:8888/' + name
+        # return 'http://172.31.163.95:8888/' + name
+        return 'http://image.meiduo.site:8888/' + name
+        # return settings.FDFS_BASE_UR + name
+
