@@ -3,11 +3,12 @@ from django.shortcuts import render
 from django.views import View
 # 分页器（有100万文字，需要制作成为一本书，先规定每页多少文字，然后得出一共多少页）
 # 数据库中的记录就是文字，我们需要考虑在分页时每页记录的条数，然后得出一共多少页
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 
 from goods.models import GoodsCategory, SKU
 from contents.utils import get_categories
 from goods.utils import get_breadcrumb
+from meiduo_mall.utils.response_code import RETCODE
 
 
 # Create your views here.
@@ -53,7 +54,12 @@ class ListViews(View):
         # Paginator('要分页的记录', '每页记录的条数')
         paginator = Paginator(skus, 5)
         # 获取到当前页码的那一页
-        page_skus = paginator.page(page_num)
+        try:
+            page_skus = paginator.page(page_num)
+        except EmptyPage:
+            # 如果page_num不正确，默认给用户404
+            return http.HttpResponseNotFound('EmptyPage')
+
         # 获取总页数
         total_page = paginator.num_pages  # 给前端的插件使用
 
@@ -68,3 +74,24 @@ class ListViews(View):
         }
 
         return render(request, 'list.html', context)
+
+
+class HotGoodsView(View):
+    """商品热销排行"""
+
+    def get(self, request, category_id):
+        # 查询指定分类的SKU信息，而且必须是上架的状态，然后按照销量由高到低排序，最后切片取出前两位
+        skus = SKU.objects.filter(category_id=category_id, is_launched=True).order_by('-sales')[:2]
+
+        # 将模型列表转字典列表，构造JSON数据
+        hot_skus = []
+        for sku in skus:
+            sku_dict = {
+                'id': sku.id,
+                'name': sku.name,
+                'price': sku.price,
+                'default_image_url': sku.default_image.url  # 记得要取出全路径
+            }
+            hot_skus.append(sku_dict)
+
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'hot_skus': hot_skus})
