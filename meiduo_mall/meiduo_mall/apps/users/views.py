@@ -139,7 +139,8 @@ class AddressView(LoginRequiredMixin, View):
             address_list.append(address_dict)
 
         context = {
-            'default_address_id': login_user.default_address_id,
+            'default_address_id': login_user.default_address_id or '0',
+            # 'default_address_id': login_user.default_address_id,  # 当收货地址为空，为None
             'address': address_list
         }
 
