@@ -10,7 +10,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from itsdangerous import BadData
 
 from users.models import User, Address
-from goods.models import SKU
 from meiduo_mall.utils.response_code import RETCODE
 from celery_tasks.email.tasks import send_verify_email
 from .utils import generate_verify_email_url, check_verify_email_token
@@ -431,7 +430,7 @@ class EmailView(LoginRequiredMixin, View):
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
 
 
-class VerifyEmailView(LoginRequiredMixin, View):
+class VerifyEmailView(View):
     """验证邮箱"""
 
     def get(self, request):
@@ -459,62 +458,7 @@ class VerifyEmailView(LoginRequiredMixin, View):
         return redirect(reverse('users:info'))
 
 
-class UserBrowseHistory(LoginRequiredMixin, View):
-    """保存用户浏览记录"""
-
-    def post(self, request):
-        """保存用户浏览记录逻辑"""
-        # 获取当前用户
-        user = request.user
-        # 接受参数
-        json_str = request.body.decode()
-        json_dict = json.loads(json_str)
-        sku_id = json_dict.get('sku_id')
-
-        # 检验参数
-        try:
-            SKU.objects.get(id=sku_id)
-        except SKU.DoesNotExist:
-            return http.HttpResponseNotFound('参数sku_id不存在')
-
-        # 保存用户浏览记录
-        redis_conn = get_redis_connection('history')
-        # 管道提升效率
-        pl = redis_conn.pipeline()
-        # 先去重
-        pl.lrem('history_%s' % user.id, 0, sku_id)
-        # 再新增
-        pl.lpush('history_%s' % user.id, sku_id)
-        # 最后截取
-        pl.ltrim('history_%s' % user.id, 0, 4)
-        # 执行
-        pl.execute()
-
-        # 响应结果
-        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK'})
-
-    def get(self, request):
-        """查询用户浏览记录"""
-        # 获取当前用户
-        user = request.user
-        # 获取对象
-        redis_conn = get_redis_connection('history')
-        sku_ids = redis_conn.lrange('history_%s' % user.id, 0, -1)  # (0,4)
-        skus = []
-        for sku_id in sku_ids:
-            sku = SKU.objects.get(id=sku_id)
-            skus.append({
-                'id': sku.id,
-                'name': sku.name,
-                'default_image_url': sku.default_image.url,
-                'price': sku.price
-            })
-
-        # 返回响应
-        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'skus': skus})
-
-
-class LogoutView(LoginRequiredMixin, View):
+class LogoutView(View):
     """退出登录"""
 
     def get(self, request):

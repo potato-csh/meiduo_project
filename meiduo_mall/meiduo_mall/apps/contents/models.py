@@ -34,5 +34,3 @@ class Content(BaseModel):
 
     def __str__(self):
         return self.category.name + ': ' + self.title
-
-
