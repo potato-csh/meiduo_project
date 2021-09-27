@@ -1,5 +1,10 @@
 # meiduo_project
 
+### 每次需要修改
+    host里面的ip
+    utils/fastdfs/client.conf里面的ip
+    配置文件中HAYSTACK_CONNECTIONS的ip
+
 ### 所需要的第三方包
     Django
     pymsql
