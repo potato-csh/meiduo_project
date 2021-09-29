@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'oauth',  # 第三方QQ模块
     'areas',  # 收货地址
     'goods',  # 商品
+    'carts',  # 购物车
 ]
 
 MIDDLEWARE = [
@@ -203,7 +204,7 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
-    "cats": {  # 购物车
+    "carts": {  # 购物车
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/4",
         "OPTIONS": {
@@ -291,7 +292,7 @@ FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://172.18.187.205:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
+        'URL': 'http://172.21.105.234:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
         'INDEX_NAME': 'meiduo_mall',  # Elasticsearch建立的索引库的名称
     },
 }

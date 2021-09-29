@@ -34,4 +34,6 @@ urlpatterns = [
     url(r'^', include(('areas.urls', 'areas'))),
     # goods
     url(r'^', include(('goods.urls', 'goods'))),
+    # carts
+    url(r'^', include(('carts.urls', 'carts'))),
 ]

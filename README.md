@@ -3,7 +3,7 @@
 ### 每次需要修改
     host里面的ip
     utils/fastdfs/client.conf里面的ip
-    配置文件中HAYSTACK_CONNECTIONS的ip
+    配置文件中HAYSTACK_CONNECTIONS的ip，并进入/home/python/elasticsearc-2.4.6/config/elasticsearch.yml第的ip
 
 ### 所需要的第三方包
     Django
