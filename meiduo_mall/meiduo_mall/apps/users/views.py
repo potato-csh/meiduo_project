@@ -12,6 +12,7 @@ from itsdangerous import BadData
 from users.models import User, Address
 from goods.models import SKU
 from meiduo_mall.utils.response_code import RETCODE
+from carts.utils import merge_cart_cookie_to_redis
 from celery_tasks.email.tasks import send_verify_email
 from .utils import generate_verify_email_url, check_verify_email_token
 from .constants import *
@@ -84,6 +85,9 @@ class LoginView(View):
         # 为了实现在首页的右上角展示用户名信息，我们需要将用户名缓存到cookie中
         # response.set_cookie('key', 'val', 'expiry')
         response.set_cookie('username', user.username, max_age=3600 * 24 * 15)
+
+        # 合并购物车
+        response = merge_cart_cookie_to_redis(request=request, user=user, response=response)
 
         return response
 
