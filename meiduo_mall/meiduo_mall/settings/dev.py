@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'areas',  # 收货地址
     'goods',  # 商品
     'carts',  # 购物车
+    'orders',  # 订单
 ]
 
 MIDDLEWARE = [
