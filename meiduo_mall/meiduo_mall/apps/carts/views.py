@@ -218,7 +218,7 @@ class CartView(View):
             conn_redis = get_redis_connection('carts')
             pl = conn_redis.pipeline()
             # 因为接口设计为幂等的，直接覆盖
-            pl.hset('cart_%s' % user.id, sku_id, count)
+            pl.hset('carts_%s' % user.id, sku_id, count)
             # 判断商品是否选中
             if selected:
                 pl.sadd('selected_%s' % user.id, sku_id)
@@ -291,9 +291,10 @@ class CartView(View):
             # 用户已登录，Redis
             conn_redis = get_redis_connection('carts')
             pl = conn_redis.pipeline()
-            pl.hdel('cart_%s' % user.id, sku_id)
+            pl.hdel('carts_%s' % user.id, sku_id)
             pl.srem('selected_%s' % user.id, sku_id)
             pl.execute()
+            # 删除结束后，没有响应的数据，只需要响应状态码即可
             return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '商品删除成功'})
 
         else:

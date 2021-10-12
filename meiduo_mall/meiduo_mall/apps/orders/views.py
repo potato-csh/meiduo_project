@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.shortcuts import render
 from django.views import View
 from django import http
+from django.db import transaction
 from django_redis import get_redis_connection
 
 from meiduo_mall.utils.response_code import RETCODE
@@ -28,7 +29,7 @@ class OrderSettlementView(LoginRequiredMixin, View):
             addresses = Address.objects.filter(user=user, is_deleted=True)
         except Exception as e:
             # 如果没有查询出地址，则跳转到地址编辑页面
-            address = None
+            addresses = None
 
         # 查询redis购物车中被勾选的商品
         redis_conn = get_redis_connection('carts')
@@ -91,69 +92,126 @@ class OrderCommitView(LoginRequiredJSONMixin, View):
         if pay_method not in [OrderInfo.PAY_METHODS_ENUM['CASH'], OrderInfo.PAY_METHODS_ENUM['ALIPAY']]:
             return http.HttpResponseForbidden('参数pay_method错误')
 
-        # 当前用户
-        user = request.user
+        # 明显的开启一次事务
+        with transaction.atomic():
+            # 在数据库操作之前需要指定保存点（保存数据库最初的状态）
+            save_id = transaction.savepoint()
 
-        # 生成订单编号：年月日时分秒+用户编号
-        order_id = timezone.localtime().strftime('%Y%m%d%H%M%S') + ('%09d' % user.id)
+            # 暴力回滚
+            try:
+                # 当前用户
+                user = request.user
 
-        # 保存订单基本信息（一）
-        order = OrderInfo.objects.create(
-            order_id=order_id,
-            user=user,
-            address=address,
-            total_count=0,
-            total_amount=0,
-            freight=Decimal(10.00),
-            pay_method=pay_method,
-            # status = 'UNPAID' if pay_method=='ALIPAY' else 'UNSEND'
-            status=OrderInfo.ORDER_STATUS_ENUM['UNPAID'] if pay_method == OrderInfo.PAY_METHODS_ENUM['ALIPAY'] else
-            OrderInfo.ORDER_STATUS_ENUM['UNSEND'],
-        )
+                # 生成订单编号：年月日时分秒+用户编号
+                order_id = timezone.now().strftime('%Y%m%d%H%M%S') + ('%09d' % user.id)
 
-        # 获取订单商品的sku
-        redis_conn = get_redis_connection('carts')
-        # {b'1':b'1',b'2':b'2'}
-        redis_cart = redis_conn.hgetall('carts_%s' % user.id)
-        # [b'1']
-        redis_selected = redis_conn.smembers('selected_%s' % user.id)
+                # 保存订单基本信息（一）
+                order = OrderInfo.objects.create(
+                    order_id=order_id,
+                    user=user,
+                    address=address,
+                    total_count=0,
+                    total_amount=0,
+                    freight=Decimal(10.00),
+                    pay_method=pay_method,
+                    # status = 'UNPAID' if pay_method=='ALIPAY' else 'UNSEND'
+                    status=OrderInfo.ORDER_STATUS_ENUM['UNPAID'] if pay_method == OrderInfo.PAY_METHODS_ENUM[
+                        'ALIPAY'] else
+                    OrderInfo.ORDER_STATUS_ENUM['UNSEND'],
+                )
 
-        # 构造购物车中被勾选的商品的数据 {'1': '1'}
-        new_cart_dict = {}
-        for sku_id in redis_selected:
-            new_cart_dict[int(sku_id)] = int(redis_cart[sku_id])
+                # 获取订单商品的sku
+                redis_conn = get_redis_connection('carts')
+                # {b'1':b'1',b'2':b'2'}
+                redis_cart = redis_conn.hgetall('carts_%s' % user.id)
+                # [b'1']
+                redis_selected = redis_conn.smembers('selected_%s' % user.id)
 
-        sku_ids = new_cart_dict.keys()
-        for sku_id in sku_ids:
-            sku = SKU.objects.get(id=sku_id)
-            sku_count = new_cart_dict[sku.id]
-            # 判断SKU库存
-            if sku_count > sku.stock:
-                return http.JsonResponse({'code': RETCODE.STOCKERR, 'errmsg': '库存不足'})
+                # 构造购物车中被勾选的商品的数据 {'1': '1'}
+                new_cart_dict = {}
+                for sku_id in redis_selected:
+                    new_cart_dict[int(sku_id)] = int(redis_cart[sku_id])
 
-            # 库存减少，销量增加
-            sku.stock -= sku_count
-            sku.sales += sku_count
-            sku.save()
+                sku_ids = new_cart_dict.keys()
+                for sku_id in sku_ids:
 
-            # 修改SPU销量
-            sku.spu.sales += sku_count
-            sku.spu.save()
+                    while True:
+                        sku = SKU.objects.get(id=sku_id)
+                        sku_count = new_cart_dict[sku.id]
 
-            # 保存订单商品信息（多）
-            OrderGoods.objects.create(
-                order=order,
-                sku=sku,
-                count=sku_count,
-                price=sku.price,
-            )
+                        # 原始数据
+                        origin_stock = sku.stock
+                        origin_sales = sku.sales
 
-            # 更新order里面的total_count和total_amount
-            order.total_count += sku_count
-            order.total_amount += (sku_count * sku.price)
+                        # 判断SKU库存
+                        if sku_count > origin_stock:
+                            # 库存不足，回滚到保存点
+                            transaction.savepoint_rollback(save_id)
+                            return http.JsonResponse({'code': RETCODE.STOCKERR, 'errmsg': '库存不足'})
 
-        # 添加上邮费
-        order.total_amount += order.freight
-        order.save()
+                        # # 模拟网络延迟
+                        # import time
+                        # time.sleep(7)
+
+                        # # 库存减少，销量增加
+                        # sku.stock -= sku_count
+                        # sku.sales += sku_count
+                        # sku.save()
+
+                        # 乐观锁更新库存和销量
+                        new_stock = origin_stock - sku_count
+                        new_sales = origin_sales + sku_count
+                        result = SKU.objects.filter(id=sku.id, stock=origin_stock).update(stock=new_stock,
+                                                                                          sales=new_sales)
+                        if result == 0:
+                            continue
+
+                        # 修改SPU销量
+                        sku.spu.sales += sku_count
+                        sku.spu.save()
+
+                        # 保存订单商品信息（多）
+                        OrderGoods.objects.create(
+                            order=order,
+                            sku=sku,
+                            count=sku_count,
+                            price=sku.price,
+                        )
+
+                        # 更新order里面的total_count和total_amount
+                        order.total_count += sku_count
+                        order.total_amount += (sku_count * sku.price)
+
+                        # 下单成功或者失败就跳出循环
+                        break
+
+                # 添加上邮费
+                order.total_amount += order.freight
+                order.save()
+
+            except Exception as e:
+                # 事务回滚
+                transaction.savepoint_rollback(save_id)
+                return http.JsonResponse({'code': RETCODE.DBERR, 'errmsg': '下单失败'})
+
+            # 提交订单成功，显式的提交一次事务
+            transaction.savepoint_commit(save_id)
 
         return http.JsonResponse({'code': RETCODE.OK, 'errmsg': '下单成功', 'order_id': order.order_id})
+
+
+class OrderSuccessView(LoginRequiredMixin, View):
+    """提交订单成功"""
+
+    def get(self, request):
+        order_id = request.GET.get('order_id')
+        payment_amount = request.GET.get('payment_amount')
+        pay_method = request.GET.get('pay_method')
+
+        context = {
+            'order_id': order_id,
+            'payment_amount': payment_amount,
+            'pay_method': pay_method
+        }
+
+        return render(request, 'order_success.html', context=context)
