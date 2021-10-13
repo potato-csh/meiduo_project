@@ -1,6 +1,7 @@
 import json
 from decimal import Decimal
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import EmptyPage, Paginator
 from django.utils import timezone
 from django.shortcuts import render
 from django.views import View
@@ -12,7 +13,6 @@ from meiduo_mall.utils.response_code import RETCODE
 from users.models import Address
 from goods.models import SKU
 from orders.models import OrderInfo, OrderGoods
-
 from meiduo_mall.utils.views import LoginRequiredJSONMixin
 
 
@@ -26,7 +26,7 @@ class OrderSettlementView(LoginRequiredMixin, View):
 
         # 查询收货地址：查询登录用户没有被逻辑删除的地址
         try:
-            addresses = Address.objects.filter(user=user, is_deleted=True)
+            addresses = Address.objects.filter(user=user, is_deleted=False)
         except Exception as e:
             # 如果没有查询出地址，则跳转到地址编辑页面
             addresses = None
@@ -215,3 +215,48 @@ class OrderSuccessView(LoginRequiredMixin, View):
         }
 
         return render(request, 'order_success.html', context=context)
+
+
+class UserOrderInfoView(LoginRequiredMixin, View):
+    """我的订单"""
+
+    def get(self, request, page_num):
+        """提供我的订单页面"""
+
+        # 查询当前用户
+        user = request.user
+        # 查询所有订单
+        orders = user.orderinfo_set.all().order_by('-create_time')
+        # 遍历所有订单
+        for order in orders:
+            # 绑定订单状态
+            order.status_name = OrderInfo.ORDER_STATUS_CHOICES[order.status - 1][1]
+            # 绑定订单支付方式
+            order.pay_method_name = OrderInfo.PAY_METHOD_CHOICES[order.status - 1][1]
+            order.sku_list = []
+            # 查询该订单的商品
+            order_goods = order.skus.all()
+            # 遍历该订单的商品
+            for order_good in order_goods:
+                sku = order_good.sku
+                sku.count = order_good.count
+                sku.amount = sku.price * sku.count
+                order.sku_list.append(sku)
+
+            page_num = int(page_num)
+            # 分页
+            try:
+                paginator = Paginator(orders, 5)
+                page_orders = paginator.page(page_num)
+                total_page = paginator.num_pages
+            except EmptyPage:
+                return http.HttpResponseNotFound('订单不存在')
+
+        # 响应结果
+        context = {
+            'page_orders': page_orders,
+            'total_page': total_page,
+            'page_num': page_num,
+        }
+
+        return render(request, 'user_center_order.html', context=context)
