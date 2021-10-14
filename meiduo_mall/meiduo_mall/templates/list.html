@@ -35,7 +35,7 @@
                     <span>|</span>
                     <a href="{{ url('carts:info') }}">我的购物车</a>
                     <span>|</span>
-                    <a href="{{ url('orders:settlement') }}">我的订单</a>
+                    <a href="{{ url('orders:info', args=(1, )) }}">我的订单</a>
                 </div>
             </div>
         </div>
@@ -140,6 +140,7 @@
                         <div class="operate">
                             <span class="price">￥{{ sku.price }}</span>
                             <span class="unit">台</span>
+                            <span>{{ sku.comments }}评价</span>
                             <a href="{{ url('goods:detail',args=(sku.id,)) }}" class="add_goods"
                                title="加入购物车"></a>
                         </div>

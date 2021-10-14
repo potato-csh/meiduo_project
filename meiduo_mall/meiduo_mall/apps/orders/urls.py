@@ -9,5 +9,5 @@ urlpatterns = [
     # 提交订单成功
     url(r'^orders/success/$', OrderSuccessView.as_view()),
     # 我的订单
-    url(r'^orders/info/(?P<page_num>\d+)/$', UserOrderInfoView.as_view()),
+    url(r'^orders/info/(?P<page_num>\d+)/$', UserOrderInfoView.as_view(),name='info'),
 ]

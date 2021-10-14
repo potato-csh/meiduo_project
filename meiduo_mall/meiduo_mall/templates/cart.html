@@ -30,10 +30,10 @@
 					<span>|</span>
 					<a href="{{ url('carts:info') }}">我的购物车</a>
 					<span>|</span>
-					<a href="{{ url('orders:settlement') }}">我的订单</a>
+					<a href="{{ url('orders:info', args=(1, )) }}">我的订单</a>
 				</div>
 			</div>
-		</div>		
+		</div>
 	</div>
 	<div class="search_bar clearfix">
 		<a href="{{ url('contents:index') }}" class="logo fl"><img src="{{ static('images/logo.png') }}"></a>
@@ -87,7 +87,7 @@
 			<span>|</span>
 			<a href="#">招聘人才</a>
 			<span>|</span>
-			<a href="#">友情链接</a>		
+			<a href="#">友情链接</a>
 		</div>
 		<p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
 		<p>电话：010-****888    京ICP备*******8号</p>
