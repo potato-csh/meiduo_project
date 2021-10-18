@@ -25,7 +25,8 @@ class PaymentView(LoginRequiredJSONMixin, View):
         except OrderInfo.DoesNotExist:
             return http.HttpResponseForbidden('订单信息错误')
 
-
+        app_private_key_string = open(r"C:\Users\Potato\PycharmProjects\Working\meiduo_project\meiduo_mall\meiduo_mall\apps\payment\keys\app_private_key.pem").read()
+        alipay_public_key_string = open(r"C:\Users\Potato\PycharmProjects\Working\meiduo_project\meiduo_mall\meiduo_mall\apps\payment\keys\alipay_public_key.pem").read()
 
         alipay = AliPay(
             appid="",
@@ -35,8 +36,8 @@ class PaymentView(LoginRequiredJSONMixin, View):
             alipay_public_key_string=alipay_public_key_string,
             sign_type="RSA",  # RSA 或者 RSA2
             debug=False,  # 默认 False
-            verbose=False,  # 输出调试数据
-            config=AliPayConfig(timeout=15)  # 可选，请求超时时间
+            # verbose=False,  # 输出调试数据
+            # config=AliPayConfig(timeout=15)  # 可选，请求超时时间
         )
 
 
