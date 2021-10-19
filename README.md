@@ -41,3 +41,13 @@
 ### 安装redis数据库
 
 ### 安装docker以及fastdfs，并修改host的ip
+
+### 沙盒账户
+    商家账号idjher8847@sandbox.com
+    商户UID2088621956628582
+    登录密码111111
+
+    买家信息
+    买家账号vbedeb9122@sandbox.com
+    登录密码111111
+    支付密码111111

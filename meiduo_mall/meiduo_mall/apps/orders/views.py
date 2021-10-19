@@ -230,9 +230,9 @@ class UserOrderInfoView(LoginRequiredMixin, View):
         # 遍历所有订单
         for order in orders:
             # 绑定订单状态
-            order.status_name = OrderInfo.ORDER_STATUS_CHOICES[order.status - 1][1]
+            order.status_name = OrderInfo.ORDER_STATUS_CHOICES[order.status-1][1]
             # 绑定订单支付方式
-            order.pay_method_name = OrderInfo.PAY_METHOD_CHOICES[order.status - 1][1]
+            order.pay_method_name = OrderInfo.PAY_METHOD_CHOICES[order.pay_method-1][1]
             order.sku_list = []
             # 查询该订单的商品
             order_goods = order.skus.all()

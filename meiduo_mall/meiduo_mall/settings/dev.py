@@ -294,7 +294,7 @@ FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://172.24.13.200:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
+        'URL': 'http://172.20.5.63:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
         'INDEX_NAME': 'meiduo_mall',  # Elasticsearch建立的索引库的名称
     },
 }
@@ -306,7 +306,7 @@ HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
 
 # 支付宝SDK参数
-ALIPAY_APPID = '2016091900551154'
+ALIPAY_APPID = '2021000118632251'
 ALIPAY_DEBUG = True  # 表示是沙箱环境还是真实支付环境
 ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
 ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
