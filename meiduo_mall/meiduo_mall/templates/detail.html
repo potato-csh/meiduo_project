@@ -340,11 +340,11 @@
                 <ul class="judge_list_con">
                     <li class="judge_list fl" v-for="comment in comments">
                         <div class="user_info fl">
-                            <b>[[comment.username]]</b>
+                            <b>[[comment_list.username]]</b>
                         </div>
                         <div class="judge_info fl">
                             <div :class="comment.score_class"></div>
-                            <div class="judge_detail">[[comment.comment]]</div>
+                            <div class="judge_detail">[[comment_list.comment]]</div>
                         </div>
                     </li>
                 </ul>
