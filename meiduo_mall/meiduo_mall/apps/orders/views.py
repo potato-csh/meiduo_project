@@ -376,9 +376,9 @@ class GoodsCommentView(View):
         for goods in order_goods_list:
             username = goods.order.user.username
             comment_list.append({
-                "username": username,
-                "comment": goods.comment,
-                "score": goods.score
+                'username': username,
+                'comment': goods.comment,
+                'score': goods.score
             })
 
-        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'goods_comment_list': comment_list})
+        return http.JsonResponse({'code': RETCODE.OK, 'errmsg': 'OK', 'comment_list': comment_list})
