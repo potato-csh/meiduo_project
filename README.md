@@ -9,7 +9,7 @@
 
 ### 所需要的第三方包
     Django
-    pymsql
+    pymysql
     jinja2
     django_redis
     itsdangerous
@@ -17,6 +17,10 @@
     PIL：pip install Pillow
     QQLoginTool
     cryptography
+    django-haystack
+    elasticsearch==2.4.1
+    django_crontab
+    python-alipay-sdk --upgrade
 
 ### 新建数据库用户
     1.新建MySQL数据库：meiduo_mall
