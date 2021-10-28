@@ -1,4 +1,4 @@
-# meiduo_project
+pip# meiduo_project
     参考：https://github.com/pywjh/MeiDuoByDjango1
 
 ### 每次需要修改
@@ -21,6 +21,10 @@
     elasticsearch==2.4.1
     django_crontab
     python-alipay-sdk --upgrade
+    
+    $ pip install fdfs_client-py-master.zip
+    $ pip install mutagen
+    $ pip install requests
 
 ### 新建数据库用户
     1.新建MySQL数据库：meiduo_mall
@@ -36,7 +40,7 @@
         flush privileges;
 
 #### 迁移数据库对象
-    python manage.py makemigrations
+    ython manage.py makemigrations
     python manage.py migrate
 
 ### 将数据导入数据库
@@ -45,6 +49,10 @@
 ### 安装redis数据库
 
 ### 安装docker以及fastdfs，并修改host的ip
+
+### host文件
+    127.0.0.1	www.meiduo.site
+    192.168.100.28		image.meiduo.site
 
 ### 沙盒账户
     商家账号idjher8847@sandbox.com

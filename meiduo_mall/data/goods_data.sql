@@ -1,16 +1,3 @@
-DROP TABLE IF EXISTS `tb_content`;
-DROP TABLE IF EXISTS `tb_content_category`;
-DROP TABLE IF EXISTS `tb_sku_specification`;
-DROP TABLE IF EXISTS `tb_sku_image`;
-DROP TABLE IF EXISTS `tb_sku`;
-DROP TABLE IF EXISTS `tb_specification_option`;
-DROP TABLE IF EXISTS `tb_spu_specification`;
-DROP TABLE IF EXISTS `tb_spu`;
-DROP TABLE IF EXISTS `tb_brand`;
-DROP TABLE IF EXISTS `tb_goods_channel`;
-DROP TABLE IF EXISTS `tb_goods_category`;
-DROP TABLE IF EXISTS `tb_channel_group`;
-
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
