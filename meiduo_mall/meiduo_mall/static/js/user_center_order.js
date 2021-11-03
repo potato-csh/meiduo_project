@@ -32,7 +32,7 @@ let vm = new Vue({
                 // 待评价
                 location.href = '/orders/comment/?order_id=' + order_id;
             } else {
-                // 其他：待收货。。。
+                // 其他：待收货 / 已完成 / ...
                 location.href = '/';
             }
         },

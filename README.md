@@ -1,5 +1,6 @@
-pip# meiduo_project
-    参考：https://github.com/pywjh/MeiDuoByDjango1
+
+###参考：
+    https://github.com/pywjh/MeiDuoByDjango1
 
 ### 每次需要修改
     host里面的ip
@@ -7,24 +8,6 @@ pip# meiduo_project
     settings/dev里面的Haystack
     配置文件中HAYSTACK_CONNECTIONS的ip，并进入/home/python/elasticsearc-2.4.6/config/elasticsearch.yml第的ip
 
-### 所需要的第三方包
-    Django
-    pymysql
-    jinja2
-    django_redis
-    itsdangerous
-    celery
-    PIL：pip install Pillow
-    QQLoginTool
-    cryptography
-    django-haystack
-    elasticsearch==2.4.1
-    django_crontab
-    python-alipay-sdk --upgrade
-    
-    $ pip install fdfs_client-py-master.zip
-    $ pip install mutagen
-    $ pip install requests
 
 ### 新建数据库用户
     1.新建MySQL数据库：meiduo_mall
@@ -51,7 +34,7 @@ pip# meiduo_project
 ### 安装docker以及fastdfs，并修改host的ip
 
 ### host文件
-    127.0.0.1	www.meiduo.site
+    127.0.0.1	        www.meiduo.site
     192.168.100.28		image.meiduo.site
 
 ### 沙盒账户

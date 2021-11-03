@@ -44,7 +44,7 @@ SECRET_KEY = 'ltw5(q&en=3sx6yc8$#(o04xx1na=@mi35p7rhpdu57z=e+zgg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.meiduo.site', 'image.meiduo.site']
+ALLOWED_HOSTS = ['www.meiduo.site', 'image.meiduo.site', '127.0.0.1']
 
 # Application definition
 
@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'haystack',  # 全文检索
-    'django_crontab',  # 定时任务
+    'django_apscheduler',  # 定时任务
 
     'users',  # 用户模块
     'contents',  # 首页广告模块
@@ -121,14 +121,22 @@ WSGI_APPLICATION = 'meiduo_mall.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': 3306,
-        'USER': 'itheima',
-        'PASSWORD': '123456',
-        'NAME': 'meiduo',
-    }
+    'default': {  # 写（主机）
+        'ENGINE': 'django.db.backends.mysql',  # 数据库引擎
+        'HOST': '127.0.0.1',  # 数据库主机
+        'PORT': 3306,  # 数据库端口
+        'USER': 'itheima',  # 数据库用户名
+        'PASSWORD': '123456',  # 数据库用户密码
+        'NAME': 'meiduo',  # 数据库名字
+    },
+    # 'slave': {  # 读（从机）
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': 8306,
+    #     'USER': 'root',
+    #     'PASSWORD': 'password',
+    #     'NAME': 'meiduo'
+    # }
 }
 # DATABASES = {
 #     'default': {
@@ -288,14 +296,13 @@ EMAIL_VERIFY_URL = 'http://www.meiduo.site:8000/emails/verification/'
 DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.fdfs_storage.FastDFSStorage'
 
 # FastDFS相关参数
-# FDFS_BASE_URL = 'http://1172.31.163.95:8888/'
 FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 
 # Haystack
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
-        'URL': 'http://192.168.100.28:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
+        'URL': 'http://ubuntu.wsl:9200/',  # Elasticsearch服务器ip地址，端口号固定为9200
         'INDEX_NAME': 'meiduo_mall',  # Elasticsearch建立的索引库的名称
     },
 }
@@ -312,10 +319,14 @@ ALIPAY_DEBUG = True  # 表示是沙箱环境还是真实支付环境
 ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
 ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
 
-CRONJOBS = [
-    # 每1分钟生成一次首页静态文件
-    ('*/1 * * * *', 'contents.crons.generate_static_index_html',
-     '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'logs/crontab.log'))
-]
+# CRONJOBS = [
+#     # 每1分钟生成一次首页静态文件
+#     ('*/1 * * * *', 'apps.contents.crons.generate_static_index_html',
+#      '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'logs/crontab.log'))
+# ]
 
-CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+# CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+
+
+# 配置数据库读写路由
+# DATABASE_ROUTERS = ['meiduo_mall.utils.db_router.MasterSlaveDBRouter']
