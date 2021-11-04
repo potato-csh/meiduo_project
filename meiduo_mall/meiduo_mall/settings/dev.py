@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import datetime
 import sys
 import pymysql
 
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
 
     'haystack',  # 全文检索
     'django_apscheduler',  # 定时任务
+    # 'corsheaders',
 
     'users',  # 用户模块
     'contents',  # 首页广告模块
@@ -78,9 +80,24 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'meiduo_mall.urls'
+
+# # CORS
+# """
+# 凡是出现在白名单中的域名，都可以访问后端接口
+# CORS_ALLOW_CREDENTIALS 指明在跨域访问中，后端是否支持对cookie的操作。
+# """
+# CORS_ORIGIN_WHITELIST = (
+#     '127.0.0.1:8080',
+#     'localhost:8080',
+#     'www.meiduo.site:8080',
+#     'api.meiduo.site:8000'
+# )
+# CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+
 
 TEMPLATES = [
     # jinja2环境配置
@@ -319,14 +336,28 @@ ALIPAY_DEBUG = True  # 表示是沙箱环境还是真实支付环境
 ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
 ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
 
-# CRONJOBS = [
-#     # 每1分钟生成一次首页静态文件
-#     ('*/1 * * * *', 'apps.contents.crons.generate_static_index_html',
-#      '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'logs/crontab.log'))
-# ]
+CRONJOBS = [
+    # 每1分钟生成一次首页静态文件
+    ('*/1 * * * *', 'apps.contents.crons.generate_static_index_html',
+     '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'logs/crontab.log'))
+]
 
-# CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
-
+CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
 
 # 配置数据库读写路由
 # DATABASE_ROUTERS = ['meiduo_mall.utils.db_router.MasterSlaveDBRouter']
+
+
+# Django REST framework JWT 配置信息
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+# 指定JWT有效期
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+}

@@ -40,4 +40,7 @@ urlpatterns = [
     url(r'^', include(('orders.urls', 'orders'))),
     # payment
     url(r'^', include(('payment.urls', 'payment'))),
+    # meiduo_admin
+    url('^meiduo_admin/', include('meiduo_admin.urls')),
+
 ]

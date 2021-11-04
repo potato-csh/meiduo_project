@@ -36,4 +36,3 @@ class IndexView(View):
         pass
 
 
-
