@@ -1,3 +1,4 @@
+apscheduler
 amqp
 appnope
 backcall
@@ -11,6 +12,7 @@ coreschema
 decorator
 diff-match-patch
 Django
+django-apscheduler
 django-ckeditor
 django-cors-headers
 django-crispy-forms
