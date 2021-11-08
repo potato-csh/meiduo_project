@@ -22,3 +22,18 @@ class UserTotalCountView(APIView):
             'count': count,
             'date': now_date
         })
+
+
+class UserDayCountView(APIView):
+    """日增用户统计"""
+
+    def get(self, request):
+        now_date = date.today()
+
+        # 日增用户数量
+        count = User.objects.filter(date_joined__gte=now_date).count()
+
+        return Response({
+            'count': count,
+            'data': now_date
+        })
