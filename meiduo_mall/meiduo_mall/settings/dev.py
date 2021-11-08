@@ -59,7 +59,7 @@ INSTALLED_APPS = [
 
     'haystack',  # 全文检索
     'django_apscheduler',  # 定时任务
-    # 'corsheaders',
+    'corsheaders',  # 解决跨域问题
 
     'users',  # 用户模块
     'contents',  # 首页广告模块
@@ -80,24 +80,25 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'meiduo_mall.urls'
 
-# # CORS
-# """
-# 凡是出现在白名单中的域名，都可以访问后端接口
-# CORS_ALLOW_CREDENTIALS 指明在跨域访问中，后端是否支持对cookie的操作。
-# """
-# CORS_ORIGIN_WHITELIST = (
-#     '127.0.0.1:8080',
-#     'localhost:8080',
-#     'www.meiduo.site:8080',
-#     'api.meiduo.site:8000'
-# )
-# CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+# CORS
+"""
+凡是出现在白名单中的域名，都可以访问后端接口
+CORS_ALLOW_CREDENTIALS 指明在跨域访问中，后端是否支持对cookie的操作。
+"""
+CORS_ORIGIN_WHITELIST = (
+    'http://127.0.0.1:8080',
+    'http://127.0.0.1:8000',
+    'http://localhost:8080',
+    'http://www.meiduo.site:8080',
+    'http://api.meiduo.site:8000'
+)
 
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
 
 TEMPLATES = [
     # jinja2环境配置
@@ -288,7 +289,8 @@ LOGGING = {
 AUTH_USER_MODEL = 'users.User'
 
 # 制定自定义的用户认证后端
-AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBackend']
+AUTHENTICATION_BACKENDS = ['meiduo_mall.utils.authenticate.UsernameMobileAuthBackend']
+# AUTHENTICATION_BACKENDS = ['users.utils.UsernameMobileAuthBackend']
 
 # 判断用户是否登录时，指定未登录用户跳转的地址
 LOGIN_URL = '/login/'
@@ -360,5 +362,5 @@ REST_FRAMEWORK = {
 # 指定JWT有效期
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
-    'JWT_RESPONSE_PAYLOAD_HANDLER':'meiduo_admin.utils.jwt_response_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'meiduo_admin.utils.jwt_response_payload_handler',
 }
