@@ -243,14 +243,14 @@ class UserOrderInfoView(LoginRequiredMixin, View):
                 sku.amount = sku.price * sku.count
                 order.sku_list.append(sku)
 
-            page_num = int(page_num)
-            # 分页
-            try:
-                paginator = Paginator(orders, 5)
-                page_orders = paginator.page(page_num)
-                total_page = paginator.num_pages
-            except EmptyPage:
-                return http.HttpResponseNotFound('订单不存在')
+        page_num = int(page_num)
+        # 分页
+        if orders:
+            paginator = Paginator(orders, 5)
+            page_orders = paginator.page(page_num)
+            total_page = paginator.num_pages
+        else:
+            return http.HttpResponseNotFound('订单不存在')
 
         # 响应结果
         context = {

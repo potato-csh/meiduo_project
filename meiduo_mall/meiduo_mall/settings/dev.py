@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'haystack',  # 全文检索
     'django_apscheduler',  # 定时任务
     'corsheaders',  # 解决跨域问题
+    'rest_framework',  # rest_framework
 
     'users',  # 用户模块
     'contents',  # 首页广告模块
@@ -357,6 +358,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 }
 
 # 指定JWT有效期

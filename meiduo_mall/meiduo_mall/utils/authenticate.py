@@ -20,7 +20,8 @@ class UsernameMobileAuthBackend(ModelBackend):
         if request is None:
             try:
                 # is_superuser判断是否是超级管理员
-                user = User.objects.get(username=username, is_superuser=True)
+                # user = User.objects.get(username=username, is_superuser=True)
+                user = User.objects.get(username=username, is_staff=True)
             except:
                 user = None
             if user is not None and user.check_password(password):

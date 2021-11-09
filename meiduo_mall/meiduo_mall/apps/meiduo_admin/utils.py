@@ -1,3 +1,5 @@
+from rest_framework.pagination import PageNumberPagination
+
 
 def jwt_response_payload_handler(token, user=None, request=None):
     """
@@ -12,3 +14,7 @@ def jwt_response_payload_handler(token, user=None, request=None):
         'id': user.id,
         'token': token
     }
+
+
+class UserPageNum(PageNumberPagination):
+    """指定分页器"""
