@@ -5,6 +5,7 @@ from .views import statistical
 from .views import user
 
 urlpatterns = [
+    #  ===============管理员登录==================
     url(r'^authorizations/$', obtain_jwt_token),
     # ===============数据统计==================
     # 用户总数
@@ -20,7 +21,7 @@ urlpatterns = [
     # 日分类商品访问量
     url(r'^statistical/goods_day_views/$', statistical.GoodsDayCountView.as_view()),
     # ===============用户管理==================
-    # 查询用户
-    url(r'^users/$',user.UserView.as_view()),
+    # 用户管理
+    url(r'^users/$', user.UserView.as_view()),
 
 ]
