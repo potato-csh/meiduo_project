@@ -19,11 +19,11 @@ def jwt_response_payload_handler(token, user=None, request=None):
     }
 
 
-class UserPageNum(PageNumberPagination):
+class PageNum(PageNumberPagination):
     """指定分页器"""
     page_size = 5  # 后端指定每页显示数量
     page_size_query_param = 'pagesize'
-    max_page_size = 10
+    max_page_size = 20
 
     # 重写分页器返回对象的方法
     def get_paginated_response(self, data):

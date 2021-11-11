@@ -2,7 +2,7 @@ from rest_framework.generics import ListAPIView, CreateAPIView, ListCreateAPIVie
 
 from users.models import User
 from ..serializers.user import UserSerializer
-from ..utils import UserPageNum
+from ..utils import PageNum
 
 
 class UserView(ListCreateAPIView):
@@ -11,7 +11,7 @@ class UserView(ListCreateAPIView):
     # 指定序列化器
     serializer_class = UserSerializer
     # 指定分页器
-    pagination_class = UserPageNum
+    pagination_class = PageNum
 
     # 为了满足前端是否传入keyword而返回不同的查询结果，重写get_queryset方法
     def get_queryset(self):

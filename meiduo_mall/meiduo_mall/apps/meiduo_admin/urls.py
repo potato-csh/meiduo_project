@@ -1,8 +1,10 @@
 from rest_framework_jwt.views import obtain_jwt_token
 from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
 
 from .views import statistical
 from .views import user
+from .views import specs
 
 urlpatterns = [
     #  ===============管理员登录==================
@@ -23,5 +25,13 @@ urlpatterns = [
     # ===============用户管理==================
     # 用户管理
     url(r'^users/$', user.UserView.as_view()),
+    # ===============商品规格==================
+    url(r'^goods/simple/$', specs.SpecsView.as_view({'get': 'simple'})),
 
 ]
+
+# ===============商品规格==================
+router = DefaultRouter()
+router.register('goods/specs', specs.SpecsView, basename='specs')
+print(router.urls)
+urlpatterns += router.urls

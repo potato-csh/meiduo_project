@@ -24,8 +24,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     # 重写create方法
     def create(self, validated_data):
-        user = super().create(validated_data)
-        # 密码加密
-        user.set_password(validated_data['password'])
-        user.save()
+        # user = super().create(validated_data)
+        # # 密码加密
+        # user.set_password(validated_data['password'])
+        # user.save()
+        # return user
+
+        user = User.objects.create_user(**validated_data)
         return user
