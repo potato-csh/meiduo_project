@@ -339,13 +339,13 @@ ALIPAY_DEBUG = True  # 表示是沙箱环境还是真实支付环境
 ALIPAY_URL = 'https://openapi.alipaydev.com/gateway.do'
 ALIPAY_RETURN_URL = 'http://www.meiduo.site:8000/payment/status/'
 
-CRONJOBS = [
-    # 每1分钟生成一次首页静态文件
-    ('*/1 * * * *', 'apps.contents.crons.generate_static_index_html',
-     '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'logs/crontab.log'))
-]
+# CRONJOBS = [
+#     # 每1分钟生成一次首页静态文件
+#     ('*/1 * * * *', 'apps.contents.crons.generate_static_index_html',
+#      '>> ' + os.path.join(os.path.dirname(BASE_DIR), 'logs/crontab.log'))
+# ]
 
-CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
+# CRONTAB_COMMAND_PREFIX = 'LANG_ALL=zh_cn.UTF-8'
 
 # 配置数据库读写路由
 # DATABASE_ROUTERS = ['meiduo_mall.utils.db_router.MasterSlaveDBRouter']

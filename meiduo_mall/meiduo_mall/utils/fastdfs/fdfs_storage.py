@@ -1,14 +1,13 @@
 from django.core.files.storage import Storage
 from django.conf import settings
+from fdfs_client.client import get_tracker_conf, Fdfs_client
 
 
 class FastDFSStorage(Storage):
     """自定义文件存储类"""
 
-    # def __init__(self, option=None):
+    # def __init__(self, option=None, client_conf=None, base_url=None):
     #     """文件存储类的初始化方法"""
-    #     if not option:
-    #         option = settings.CUSTOM_STORAGE_OPTIONS
 
     def _open(self, name, mode='rb'):
         """
@@ -28,6 +27,8 @@ class FastDFSStorage(Storage):
         :return: None
         """
         # 因为当前不是为了保存某个文件，所以该方法无效，但是又需要重写，所以pass
+        # client = Fdfs_client(self.client_conf)
+        # res = client.append_by_buffer(content.read())
         pass
 
     def url(self, name):
@@ -40,4 +41,3 @@ class FastDFSStorage(Storage):
         # return 'http://172.31.163.95:8888/' + name
         return 'http://image.meiduo.site:8888/' + name
         # return settings.FDFS_BASE_UR + name
-
