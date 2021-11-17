@@ -27,7 +27,6 @@ urlpatterns = [
     url(r'^goods/simple/$', specs.SpecsView.as_view({'get': 'simple'})),
     # ===============图片管理==================
     url(r'^skus/simple/$', images.ImageView.as_view({'get': 'simple'})),
-
 ]
 
 router = DefaultRouter()

@@ -1,3 +1,4 @@
+from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import serializers
 
@@ -21,6 +22,7 @@ class SKUView(ModelViewSet):
             return SKU.objects.filter(name__contains=keyword)
 
     # 获取下拉categories分类的信息
-    def categories(self):
+    @action(methods=['get'], detail=False)
+    def categories(self, request):
         categories = GoodsCategory.objects.all()
         ser = GoodsCategorySerializer
