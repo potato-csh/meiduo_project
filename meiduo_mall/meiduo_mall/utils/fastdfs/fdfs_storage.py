@@ -8,6 +8,14 @@ class FastDFSStorage(Storage):
 
     # def __init__(self, option=None, client_conf=None, base_url=None):
     #     """文件存储类的初始化方法"""
+    #     if client_conf is None:
+    #         client_conf = get_tracker_conf(r'C:\Users\Potato\PycharmProjects\Working\meiduo_project\meiduo_mall\meiduo_mall\utils\fastdfs\client.conf')
+    #
+    #         print(client_conf)
+    #     self.client_conf = client_conf
+    #
+    #     if base_url is None:
+    #         base_url = settings.FDFS_BASE_URL
 
     def _open(self, name, mode='rb'):
         """
@@ -41,3 +49,5 @@ class FastDFSStorage(Storage):
         # return 'http://172.31.163.95:8888/' + name
         return 'http://image.meiduo.site:8888/' + name
         # return settings.FDFS_BASE_UR + name
+
+FastDFSStorage()

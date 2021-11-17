@@ -1,4 +1,3 @@
-apscheduler
 amqp
 appnope
 backcall
@@ -12,7 +11,7 @@ coreschema
 decorator
 diff-match-patch
 Django
-django-apscheduler
+django_apscheduler
 django-ckeditor
 django-cors-headers
 django-crispy-forms
@@ -28,9 +27,9 @@ djangorestframework
 djangorestframework-jwt
 drf-extensions
 drf-haystack
-elasticsearch==2.4.1
+elasticsearch
 et-xmlfile
-fdfs-client-py3
+fdfs-client-py
 future
 hjutils
 httplib2
@@ -43,6 +42,7 @@ jdcal
 jedi
 Jinja2
 kombu
+MarkupSafe
 mutagen
 odfpy
 openpyxl
