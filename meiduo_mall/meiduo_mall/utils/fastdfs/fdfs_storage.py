@@ -34,9 +34,15 @@ class FastDFSStorage(Storage):
         :param content: 文件的二进制内容
         :return: None
         """
-        # 因为当前不是为了保存某个文件，所以该方法无效，但是又需要重写，所以pass
-        # client = Fdfs_client(self.client_conf)
-        # res = client.append_by_buffer(content.read())
+        # conf_path = get_tracker_conf(settings.FASTDFS_PATH)
+        # client = Fdfs_client(conf_path)
+        # result = client.upload_by_buffer(content.read())
+        # if result.get('Status') != 'Upload successed.':
+        #     raise Exception('上传文件到FastDFS失败')
+        # filename = result.get('Remote file_id')
+        # # return filename
+        # # return str(filename)
+        # return filename.decode()
         pass
 
     def url(self, name):
@@ -49,5 +55,6 @@ class FastDFSStorage(Storage):
         # return 'http://172.31.163.95:8888/' + name
         return 'http://image.meiduo.site:8888/' + name
         # return settings.FDFS_BASE_UR + name
+
 
 FastDFSStorage()

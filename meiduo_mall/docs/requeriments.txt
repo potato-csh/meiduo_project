@@ -29,8 +29,8 @@ drf-extensions
 drf-haystack
 elasticsearch
 et-xmlfile
-fdfs-client-py
 future
+gevent
 hjutils
 httplib2
 idna
@@ -46,6 +46,7 @@ MarkupSafe
 mutagen
 odfpy
 openpyxl
+py3Fdfs
 parso
 pexpect
 pickleshare

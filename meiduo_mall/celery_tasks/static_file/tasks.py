@@ -5,86 +5,79 @@ import django
 import os
 
 from django.conf import settings
-from django.shortcuts import render
 
 from goods.utils import get_breadcrumb
 from contents.utils import get_categories
+from django.template import loader
 
-from goods.models import SKU
 from celery_tasks.main import celery_app
+from goods import models
 
 
 @celery_app.task(name='get_detail_html')
 def get_detail_html(sku_id):
-    sku = SKU.objects.get(id=sku_id)
-    # 分类数据
-    categories = get_categories()
-
-    # 获取面包屑导航
-    breadcrumb = get_breadcrumb(sku.category)
+    """
+        生成静态商品详情页面
+        :param sku_id: 商品sku id
+        """
+    # 获取当前sku的信息
+    sku = models.SKU.objects.get(id=sku_id)
 
     # 获取spu
     spu = sku.spu
 
-    # 获取规格信息：sku===>spu==>specs
-    specs = spu.specs.order_by('id')
+    # 查询商品频道分类
+    categories = get_categories()
+    # 查询面包屑导航
+    breadcrumb = get_breadcrumb(sku.category)
 
-    # 查询所有的sku，如华为P10的所有库存商品
-    skus = spu.skus.order_by('id')
-    '''
-    {
-        选项:sku_id
-    }
-    说明：键的元组中，规格的索引是固定的
-    示例数据如下：
-    {
-        (1,3):1,
-        (2,3):2,
-        (1,4):3,
-        (2,4):4
-    }
-    '''
-    sku_options = {}
-    sku_option = []
-    for sku1 in skus:
-        infos = sku1.specs.order_by('spec_id')
-        option_key = []
-        for info in infos:
-            option_key.append(info.option_id)
-            # 获取当前商品的规格信息
-            if sku.id == sku1.id:
-                sku_option.append(info.option_id)
-        sku_options[tuple(option_key)] = sku1.id
+    # 构建当前商品的规格键
+    sku_specs = sku.specs.order_by('spec_id')
+    sku_key = []
+    for spec in sku_specs:
+        sku_key.append(spec.option.id)
+    # 获取当前商品的所有SKU
+    skus = sku.spu.sku_set.all()
+    # 构建不同规格参数（选项）的sku字典
+    spec_sku_map = {}
+    for s in skus:
+        # 获取sku的规格参数
+        s_specs = s.specs.order_by('spec_id')
+        # 用于形成规格参数-sku字典的键
+        key = []
+        for spec in s_specs:
+            key.append(spec.option.id)
+        # 向规格参数-sku字典添加记录
+        spec_sku_map[tuple(key)] = s.id
+    # 获取当前商品的规格信息
+    goods_specs = sku.spu.specs.order_by('id')
+    # 若当前sku的规格信息不完整，则不再继续
+    if len(sku_key) < len(goods_specs):
+        return
+    for index, spec in enumerate(goods_specs):
+        # 复制当前sku的规格键
+        key = sku_key[:]
+        # 该规格的选项
+        spec_options = spec.options.all()
+        for option in spec_options:
+            # 在规格参数sku字典中查找符合当前规格的sku
+            key[index] = option.id
+            option.sku_id = spec_sku_map.get(tuple(key))
+        spec.spec_options = spec_options
 
-    # 遍历当前spu所有的规格
-    specs_list = []
-    for index, spec in enumerate(specs):
-        option_list = []
-        for option in spec.options.all():
-            # 如果当前商品为蓝、64,则列表为[2,3]
-            sku_option_temp = sku_option[:]
-            # 替换对应索引的元素：规格的索引是固定的[1,3]
-            sku_option_temp[index] = option.id
-            # 为选项添加sku_id属性，用于在html中输出链接
-            option.sku_id = sku_options.get(tuple(sku_option_temp), 0)
-            # 添加选项对象
-            option_list.append(option)
-        # 为规格对象添加选项列表
-        spec.option_list = option_list
-        # 重新构造规格数据
-        specs_list.append(spec)
-
+    # 上下文
     context = {
-        'sku': sku,
         'categories': categories,
         'breadcrumb': breadcrumb,
-        'category_id': sku.category_id,
+        'sku': sku,
         'spu': spu,
-        'specs': specs_list
+        'category_id': sku.category_id,
+        'specs': goods_specs,
     }
-    response = render(None, 'detail.html', context)
 
-    file_name = os.path.join(settings.BASE_DIR, 'static/detail/%d.html' % sku.id)
-    # 写文件
-    with open(file_name, 'w') as f1:
-        f1.write(response.content.decode())
+    template = loader.get_template('detail.html')
+    html_text = template.render(context)
+    file_path = os.path.join(settings.STATICFILES_DIRS[0], 'detail\\' + str(sku_id) + '.html')
+    file_path = file_path.replace('\\', '/')
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(html_text)

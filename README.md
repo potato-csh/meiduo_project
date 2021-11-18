@@ -32,6 +32,7 @@
 ### 安装redis数据库
 
 ### 安装docker以及fastdfs，并修改host的ip
+    pip install fdfs-client-py
 
 ### host文件
     127.0.0.1	        www.meiduo.site
