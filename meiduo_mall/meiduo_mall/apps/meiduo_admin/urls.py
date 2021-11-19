@@ -2,7 +2,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 
-from .views import statistical, images, user, specs, skus
+from .views import statistical, images, user, specs, skus, orders
 
 urlpatterns = [
     #  ===============管理员登录==================
@@ -40,6 +40,9 @@ router.register('skus/images', images.ImageView, basename='images')
 
 # ===============SKU表管理==================
 router.register('skus', skus.SKUView, basename='skus')
+
+# ===============订单表管理==================
+router.register('orders', orders.OrderView, basename='orders')
 
 print(router.urls)
 urlpatterns += router.urls
