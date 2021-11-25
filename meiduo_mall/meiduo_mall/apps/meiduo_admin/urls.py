@@ -2,7 +2,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from django.conf.urls import url
 from rest_framework.routers import DefaultRouter
 
-from .views import statistical, images, user, specs, skus, orders
+from .views import statistical, images, user, specs, skus, orders, permission, group, admin
 
 urlpatterns = [
     #  ===============管理员登录==================
@@ -29,6 +29,13 @@ urlpatterns = [
     url(r'^skus/simple/$', images.ImageView.as_view({'get': 'simple'})),
     # ===============SKU管理==================
     url(r'goods/(?P<pk>\d+)/specs/$', skus.SKUView.as_view({'get': 'specs'})),
+    # ===============权限管理==================
+    url(r'permission/content_types/$', permission.PermissionView.as_view({'get': 'content_types'})),
+    # ===============用户组管理==================
+    url(r'permission/simple/$', group.GroupView.as_view({'get': 'simple'})),
+    # ===============用户组管理==================
+    url(r'permission/groups/simple/$', admin.AdminView.as_view({'get': 'simple'})),
+
 ]
 
 router = DefaultRouter()
@@ -43,6 +50,15 @@ router.register('skus', skus.SKUView, basename='skus')
 
 # ===============订单表管理==================
 router.register('orders', orders.OrderView, basename='orders')
+
+# ===============权限管理==================
+router.register('permission/perms', permission.PermissionView, basename='perms')
+
+# ===============用户组管理==================
+router.register('permission/groups', group.GroupView, basename='groups')
+
+# ===============管理员管理==================
+router.register('permission/admins', admin.AdminView, basename='admins')
 
 print(router.urls)
 urlpatterns += router.urls
