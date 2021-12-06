@@ -2,8 +2,8 @@
 <project version="4">
   <component name="WebServers">
     <option name="servers">
-      <webServer id="fdcbf4f5-d968-436e-9228-ab66eb507539" name="Ubuntu" url="http://172.31.120.215">
-        <fileTransfer host="172.31.120.215" port="2222" rootFolder="/home/potato" accessType="SFTP">
+      <webServer id="fdcbf4f5-d968-436e-9228-ab66eb507539" name="Ubuntu" url="http://172.29.231.158">
+        <fileTransfer host="172.29.231.158" port="2222" accessType="SFTP">
           <advancedOptions>
             <advancedOptions controlEncoding="utf-8" dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
